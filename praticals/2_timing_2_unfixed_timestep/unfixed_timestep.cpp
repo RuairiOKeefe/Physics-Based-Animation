@@ -22,7 +22,7 @@ chrono::time_point<chrono::high_resolution_clock> tp_end;
 
 //use this function simulate render workload
 void doWork() {
-  // this_thread::sleep_for(std::chrono::milliseconds(rand()%50));
+	this_thread::sleep_for(std::chrono::milliseconds(rand()%50));
 }
 
 
@@ -50,12 +50,12 @@ bool update(double delta_time) {
       remainingTime -= dt;
       t += dt;
 
-      // *********************************
-      // Apply Accleration to Velocity
-
-      // Apply Velocity to position
-
-      // *********************************
+	  // *********************************
+	  // Apply Accleration to Velocity
+	  ball.velocity += (gravity*delta_time);
+	  // Apply Velocity to position
+	  ball.position += ball.velocity*delta_time;
+	  // *********************************
 
       if (ball.position.y <= 0.0f) {
         tp_end = chrono::high_resolution_clock::now();
