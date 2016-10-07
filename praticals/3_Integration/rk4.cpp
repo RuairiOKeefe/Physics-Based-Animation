@@ -42,10 +42,6 @@ void UpdatePhysics_rk4(const double t, const double dt) {
 		// *********************************
 		balls[i].position += (a.dx + (2.0 * b.dx) + (2.0 * c.dx) + d.dx) * dt / 6.0;
 		balls[i].velocity += (a.dv + (2.0 * b.dv) + (2.0 * c.dv) + d.dv) * dt / 6.0;
-
-		//apply against dt and get final outputs
-
-
 		// *********************************
 
 		if (balls[i].position.y <= 0.0f) {

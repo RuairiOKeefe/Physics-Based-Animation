@@ -4,7 +4,7 @@ using namespace std;
 using namespace glm;
 static vector<cPhysics *> physicsScene;
 
-static dvec3 gravity = dvec3(0, -10.0, 0);
+static dvec3 gravity = dvec3(0, -9.8, 0);
 
 cPhysics::cPhysics() : pm(POINT), Component("Physics") { physicsScene.push_back(this); }
 
@@ -27,8 +27,9 @@ void cPhysics::SetParent(Entity *p) {
   prev_position = position;
 }
 
-void UpdatePhysics(const double t, const double dt) {
+void UpdatePhysics(const double t, const double dt, dvec3 acc) {
   for (auto &e : physicsScene) {
+	vec3 acceleration = acc + gravity;
     e->Render();
     // calcualte velocity from current and previous position
     dvec3 velocity = e->position - e->prev_position;
