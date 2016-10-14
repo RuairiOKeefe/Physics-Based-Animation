@@ -9,56 +9,42 @@
 #include <vector>
 using namespace std;
 using namespace glm;
-static unsigned int numLinks = 0;
 
-static void Reach(int i, const vec3 &target, std::vector<Link> &const links) {
-	// our current orientation
-	dquat qCur = angleAxis(links[i].m_angle, links[i].m_axis);
-	// current position of this effector
-	vec3 vlinkBasePos = (links[i].m_base)[3];
-	// current position of the effector at the end of the chain
-	vec3 vEndEffPos = links[links.size() - 1].m_end[3];
-	// convert our axis to world space
-	vec3 vLinkAxis = links[i].m_worldaxis;
-	// project target onto axis plane
-	vec3 vplanetarget = projectOntoPlane(target, vLinkAxis, vlinkBasePos);
-	// project vEndEffPos onto axis plane
-	vec3 vplaneEndEff = projectOntoPlane(vEndEffPos, vLinkAxis, vlinkBasePos);
+static void Reach(const size_t i, const dvec3 &target, std::vector<Link> &links) {
+  // our current orientation
+  dquat qCur = angleAxis(links[i].m_angle, links[i].m_axis);
+  // current position of this effector
+  vec3 vlinkBasePos = (links[i].m_base)[3];
+  // current position of the effector at the end of the chain
+  vec3 vEndEffPos = links[links.size() - 1].m_end[3];
+  // convert our axis to world space
+  vec3 vLinkAxis = links[i].m_worldaxis;
+  // project target onto axis plane
+  vec3 vplanetarget = projectOntoPlane(target, vLinkAxis, vlinkBasePos);
+  // project vEndEffPos onto axis plane
+  vec3 vplaneEndEff = projectOntoPlane(vEndEffPos, vLinkAxis, vlinkBasePos);
 
-	// These are the two vectors we want to converge.
-	vec3 vLinkBaseToEndEffDirection = normalize(vplaneEndEff - vlinkBasePos);
-	vec3 vLinkBaseToTargetDirection = normalize(vplanetarget - vlinkBasePos);
+  // These are the two vectors we want to converge.
+  vec3 vLinkBaseToEndEffDirection = normalize(vplaneEndEff - vlinkBasePos);
+  vec3 vLinkBaseToTargetDirection = normalize(vplanetarget - vlinkBasePos);
 
-	// Get Dot of the two vectors
-	float cosAngle = dot(vLinkBaseToTargetDirection, vLinkBaseToEndEffDirection);
-	if (abs(cosAngle) < 1.0f) {
-		// *********************************
-		// Get the Angle between the two vectors
-		float angleVec = angle(vLinkBaseToTargetDirection, vLinkBaseToEndEffDirection);
+  // Get Dot of the two vectors
+  float cosAngle = dot(vLinkBaseToEndEffDirection, vLinkBaseToTargetDirection);
+  if (abs(cosAngle) < 1.0f) {
+	  // *********************************
+	  // Get the Angle between the two vectors
+	  float angleVec = angle(vLinkBaseToTargetDirection, vLinkBaseToEndEffDirection);
 
-		// Turn into a Quat with our axis
-		dquat qNew = normalize(angleAxis(angleVec, vLinkAxis));
+	  // Turn into a Quat with our axis
+	  dquat qNew = normalize(angleAxis(angleVec, vLinkAxis));
 
-		// Multply our current Quat with it
-		qCur *= qNew;
-		qCur = normalize(qCur); //Important because otherwise NaN's will happen, we don't want that.
+	  // Multply our current Quat with it
+	  qCur *= qNew;
+	  qCur = normalize(qCur); //Important because otherwise NaN's will happen, we don't want that.
 
-								// Pull out the angle component, set the link params
-		links[i].m_angle = angle(qCur);
+							  // Pull out the angle component, set the link params
+	  links[i].m_angle = angle(qCur);
 
-		// *********************************
-	}
-}
-
-void ik_1dof_Update(const vec3 &const target, std::vector<Link> &const links, const float linkLength) {
-	numLinks = links.size();
-	for (size_t i = links.size(); i >= 1; --i) { //was using below for loop however, wasnt able to find solutions well
-												 //for (size_t i = 0; i < links.size() - 1; ++i) {
-		UpdateHierarchy();
-		Reach(i - 1, target, links);
-		const float distance = length(vec3(links[links.size() - 1].m_end[3]) - target);
-		if (distance < 0.5f) {
-			return;
-		}
-	}
+	  // *********************************
+  }
 }

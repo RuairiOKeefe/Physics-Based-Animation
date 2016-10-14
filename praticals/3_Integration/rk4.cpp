@@ -9,9 +9,9 @@ struct Derivative {
 	dvec3 dx, dv;
 };
 
-dvec3 acceleration(const sBall &body, dvec3 x, dvec3 v, float t) {
-	// we could be summing accelerations, or doing other cool things here
-	return dvec3(0, -10.0, 0);
+dvec3 acceleration(const sBall &body, dvec3 x, dvec3 v, double t) {
+  // we could be summing accelerations, or doing other cool things here
+  return dvec3(0, -10.0, 0);
 }
 
 Derivative compute(const sBall &body, const double t, const double dt, const Derivative &d) {

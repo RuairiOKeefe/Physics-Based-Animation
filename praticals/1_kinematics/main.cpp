@@ -12,9 +12,10 @@ using namespace graphics_framework;
 using namespace glm;
 
 // Simulation constants
-int numLinks = 5;
-float linkLength = 2.0f; // Length of each link
+int numLinks = 3;
+double linkLength = 2.0f; // Length of each link
 std::vector<Link> links;
+<<<<<<< HEAD
 std::array<std::vector<Link>, 2> pastLinks;
 std::vector<Link> lerpLinks;
 int order = 0;
@@ -134,6 +135,19 @@ void RenderIK() {
 			//phys::DrawPlane(base, lerpLinks[i].m_worldaxis, vec3(0.01f));
 		}
 	}
+  for (int i = 0; i < (int)links.size(); ++i) {
+    dmat4 R1 = mat4_cast(angleAxis(links[i].m_angle, links[i].m_axis));
+    dmat4 T1 = translate(dmat4(1.0f), dvec3(linkLength, 0, 0));
+    links[i].m_base = dmat4(1.0) * R1;
+    links[i].m_end = links[i].m_base * T1;
+    links[i].m_worldaxis = links[i].m_axis;
+    if (i > 0) {
+      // Don't move the root link.
+      links[i].m_base = links[i - 1].m_end * links[i].m_base;
+      links[i].m_end = links[i].m_base * links[i].m_end;
+      links[i].m_worldaxis = normalize(mat3(links[i - 1].m_end) * links[i].m_axis);
+    }
+  }
 }
 
 bool update(float delta_time)
