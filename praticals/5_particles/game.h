@@ -21,6 +21,7 @@ public:
   bool IsActive();
   void SetActive(bool b);
   virtual void SetParent(Entity *p);
+  virtual void Moved();
   Entity *GetParent() const;
 };
 

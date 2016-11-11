@@ -17,6 +17,10 @@ void Component::SetActive(bool b) { active_ = b; }
 
 void Component::SetParent(Entity *p) { Ent_ = p; }
 
+void Component::Moved()
+{
+}
+
 Entity *Component::GetParent() const { return Ent_; }
 
 //############## Entity ###################
@@ -64,6 +68,9 @@ void Entity::SetScale(const vec3 &v3) {
 void Entity::SetPosition(const vec3 &v3) {
   position_ = v3;
   changed_ = true;
+  for (auto &c : components_) {
+	  c->Moved();
+  }
 }
 
 void Entity::SetRotation(const vec3 &v3) {

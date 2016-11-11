@@ -40,23 +40,28 @@ bool update(double delta_time) {
   for (auto &e : SceneList) {
     e->Update(delta_time);
   }
-
   phys::Update(delta_time);
   return true;
 }
 
 bool load_content() {
-  phys::Init();
-  for (size_t i = 0; i < 4; i++) {
-    SceneList.push_back(move(CreateParticle()));
-  }
-  floorEnt = unique_ptr<Entity>(new Entity());
-  floorEnt->AddComponent(unique_ptr<Component>(new cPlaneCollider()));
-
-  phys::SetCameraPos(vec3(20.0f, 10.0f, 20.0f));
-  phys::SetCameraTarget(vec3(0, 10.0f, 0));
-  InitPhysics();
-  return true;
+	phys::Init();
+	for (size_t i = 0; i < 5; i++) {
+		SceneList.push_back(move(CreateParticle()));
+	}
+	SceneList[4]->SetPosition(vec3(-6.0f, 10.0f, -4.0f));
+	auto b = SceneList[4]->GetComponents("Physics");
+	if (b.size() == 1)//Check only 1 phys component
+	{
+		const auto p = static_cast<cPhysics *>(b[0]);//Find said phys component
+		p->AddImpulse(vec3(-500.0f, 1000.0f, 0.0f));//turns out impulse does work but needs to be really large because this will be multiplied by delta time, but only act for a single frame (perhaps look into allowing a desired velocity to be entered?)
+	}
+	floorEnt = unique_ptr<Entity>(new Entity());
+	floorEnt->AddComponent(unique_ptr<Component>(new cPlaneCollider()));
+	phys::SetCameraPos(vec3(20.0f, 10.0f, 20.0f));
+	phys::SetCameraTarget(vec3(0, 10.0f, 0));
+	InitPhysics();
+	return true;
 }
 
 bool render() {

@@ -49,7 +49,19 @@ void cPhysics::SetParent(Entity *p) {
   prev_position = position;
 }
 
-void cPhysics::AddImpulse(const glm::vec3 &i) { forces += i; }
+void cPhysics::AddImpulse(const glm::vec3 &i)
+{
+	forces += i;
+}
+
+void cPhysics::Moved()
+{
+	if (position != Ent_->GetPosition())
+	{
+		position = Ent_->GetPosition();
+		prev_position = position;
+	}
+}
 
 void UpdatePhysics(const double t, const double dt) {
   std::vector<collisionInfo> collisions;
