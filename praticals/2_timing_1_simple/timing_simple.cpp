@@ -23,7 +23,53 @@ chrono::time_point<chrono::high_resolution_clock> tp_end;
 
 // use this function simulate render workload
 void doWork() {
+<<<<<<< HEAD
 	this_thread::sleep_for(std::chrono::milliseconds(rand() % 50));
+}
+
+bool update(double delta_time) {
+	doWork();
+	static bool done = false;
+	static uint16_t frames = 0;
+	if (glfwGetKey(renderer::get_window(), GLFW_KEY_SPACE)) {
+		tp_start = chrono::high_resolution_clock::now();
+		ball.position = dvec3(0, fallheight, 0);
+		done = false;
+		frames = 0;
+	}
+
+	if (!done) {
+		frames++;
+		// *********************************
+		// Apply Accleration to Velocity
+		ball.velocity += (gravity*delta_time);
+		// Apply Velocity to position
+		ball.position += ball.velocity*delta_time;
+		// *********************************
+
+		if (ball.position.y <= 0.0f) {
+			tp_end = chrono::high_resolution_clock::now();
+			ball.velocity.y = 0;
+			done = true;
+			cout << "Ball Took: " << chrono::duration_cast<chrono::duration<double>>(tp_end - tp_start).count()
+				<< " seconds, " << frames << " frames(ticks)" << endl;
+		}
+	}
+	phys::Update(delta_time);
+	return true;
+}
+
+bool load_content() {
+	phys::Init();
+	ball.velocity = dvec3(0);
+	ball.position = dvec3(0);
+	phys::SetCameraPos(vec3(20.0f, 10.0f, 20.0f));
+	phys::SetCameraTarget(vec3(0, 10.0f, 0));
+	tp_start = chrono::high_resolution_clock::now();
+	tp_end = chrono::high_resolution_clock::now();
+	return true;
+=======
+  // this_thread::sleep_for(std::chrono::milliseconds(rand() % 50));
 }
 
 bool update(double delta_time) {
@@ -44,9 +90,9 @@ bool update(double delta_time) {
     ticks++;
     // *********************************
     // Apply Accleration to Velocity
-	ball.velocity += (gravity*delta_time);
-	// Apply Velocity to position
-	ball.position += ball.velocity*delta_time;
+
+    // Apply Velocity to position
+
     // *********************************
 
     if (ball.position.y <= 0.0f) {
@@ -74,6 +120,7 @@ bool load_content() {
   tp_end = chrono::high_resolution_clock::now();
   cout << "\nPress Space to reset ball" << endl;
   return true;
+>>>>>>> 23653dbccc5f0e02a2440223452391bc5c87f263
 }
 
 bool render() {
