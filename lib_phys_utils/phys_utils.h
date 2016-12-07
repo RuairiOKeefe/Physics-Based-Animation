@@ -1,6 +1,7 @@
 #pragma once
 #include <glm\glm.hpp>
 #include <iostream>
+#include <graphics_framework.h>
 #define RED                                                                                                            \
   { 4278190335 }
 #define GREEN                                                                                                          \
@@ -34,6 +35,7 @@ union RGBAInt32 {
 const RGBAInt32 RandomColour();
 void DrawScene();
 void Init();
+graphics_framework::free_camera& GetCamera();
 void Update(double delta_time);
 void SetCameraPos(const glm::vec3 &p0);
 void SetCameraTarget(const glm::vec3 &p0);

@@ -36,7 +36,6 @@ void Init() {
 	effG.add_shader("shaders/phys_grid.frag", GL_FRAGMENT_SHADER);
 	effG.build();
 	cam.set_position(vec3(10.0f, 10.0f, 10.0f));
-	cam.set_target(vec3(0.0f, 0.0f, 0.0f));
 	auto aspect = static_cast<float>(renderer::get_screen_width()) / static_cast<float>(renderer::get_screen_height());
 	cam.set_projection(quarter_pi<float>(), aspect, 2.414f, 1000.0f);
 
@@ -44,6 +43,11 @@ void Init() {
 	light.set_light_colour(vec4(1.0f, 1.0f, 1.0f, 1.0f));
 	light.set_direction(vec3(0.0f, 1.0f, 0.0f));
 	mat = material(vec4(0.0f, 0.0f, 0.0f, 1.0f), vec4(1.0f, 1.0f, 1.0f, 1.0f), vec4(1.0f, 1.0f, 1.0f, 1.0f), 25.0f);
+}
+
+graphics_framework::free_camera& GetCamera()
+{
+	return cam;
 }
 
 void FreeCam(float delta_time)
