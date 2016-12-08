@@ -76,6 +76,13 @@ bool load_content() {
   }
   SceneList.push_back(move(CreateBox({0, 4, 0})));
 
+  auto b = SceneList[0]->GetComponents("Physics");
+  if (b.size() == 1)//Check only 1 phys component
+  {
+	  const auto p = static_cast<cPhysics *>(b[0]);//Find said phys component
+	  p->AddLinearImpulse(vec3(-500.0f, 1000.0f, 0.0f));//turns out impulse does work but needs to be really large because this will be multiplied by delta time, but only act for a single frame (perhaps look into allowing a desired velocity to be entered?)
+  }
+
   floorEnt = unique_ptr<Entity>(new Entity());
   floorEnt->AddComponent(unique_ptr<Component>(new cPlaneCollider()));
   floorEnt->SetName("Floor");

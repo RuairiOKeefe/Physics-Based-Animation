@@ -5,7 +5,6 @@
 using namespace std;
 using namespace glm;
 
-//----------------------
 cParticle::cParticle(const string &tag) : mass(1.0), inversemass(1.0), linearDamping(1.0), Component(tag) {
   GetPhysicsScene().push_back(this);
 }
@@ -45,7 +44,6 @@ void cParticle::Integrate(const double dt) {
   GetParent()->SetPosition(position);
 }
 
-//----------------------
 cRigidBody::cRigidBody() : angularDamping(0.9), orientation(normalize(dquat())), cParticle("RididBody") {
   ComputeLocalInvInertiaTensor();
 }
@@ -72,7 +70,7 @@ void cRigidBody::Integrate(const double dt) {
   cParticle::Integrate(dt);
 
   angVelocity += worldInvInertia * torques * dt;
-  angVelocity *= min(pow(angularDamping, dt), 1.0);
+  angVelocity *= glm::min(pow(angularDamping, dt), 1.0);
 
   orientation += dquat(angVelocity * dt) * orientation;
   orientation = normalize(orientation);
