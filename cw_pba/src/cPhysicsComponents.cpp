@@ -16,7 +16,7 @@ cParticle::~cParticle() {
 	}
 }
 
-void cParticle::Update(double delta) {}
+void cParticle::Update(double delta){}
 
 void cParticle::SetParent(Entity *p) {
 	Component::SetParent(p);
@@ -50,7 +50,19 @@ cRigidBody::cRigidBody() : angularDamping(0.9), orientation(normalize(dquat())),
 
 cRigidBody::~cRigidBody() {}
 
-void cRigidBody::Update(double delta) {}
+void cRigidBody::Update(double delta)
+{
+	if (hasSpring)
+	{
+		dvec3 f = normalize(springPos - position);
+		double x = length(springPos - position);
+		double k = elasticity / restLength;
+
+		f *= (x*k);
+
+		forces += f;
+	}
+}
 
 void cRigidBody::AddForceAt(const glm::dvec3 &force, const glm::dvec3 &point) {
 	// Add the force and torque

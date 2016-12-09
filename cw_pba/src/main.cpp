@@ -29,7 +29,7 @@ unique_ptr<Entity> CreateParticle() {
 	return ent;
 }
 
-unique_ptr<Entity> CreateBox(const vec3 &position)//May want to make more of these, perhaps make a factory?
+unique_ptr<Entity> CreateBox(const vec3 &position)
 {
 	unique_ptr<Entity> ent(new Entity());
 	ent->SetPosition(position);
@@ -45,6 +45,43 @@ unique_ptr<Entity> CreateBox(const vec3 &position)//May want to make more of the
 	return ent;
 }
 
+unique_ptr<Entity> CreateBox(const vec3 &position, quat &rotation)
+{
+	unique_ptr<Entity> ent(new Entity());
+	ent->SetPosition(position);
+	ent->SetRotation(rotation);
+	unique_ptr<Component> physComponent(new cRigidCube());
+	unique_ptr<cShapeRenderer> renderComponent(new cShapeRenderer(cShapeRenderer::BOX));
+	renderComponent->SetColour(phys::RandomColour());
+	ent->AddComponent(physComponent);
+	ent->SetName("Cube");
+	ent->AddComponent(unique_ptr<Component>(new cBoxCollider()));
+	ent->AddComponent(unique_ptr<Component>(move(renderComponent)));
+
+	return ent;
+}
+
+unique_ptr<Entity> CreateBox(const vec3 &position, dvec3 &springPos, double restLength)
+{
+	unique_ptr<Entity> ent(new Entity());
+	ent->SetPosition(position);
+	ent->SetRotation(angleAxis(-45.0f, vec3(1, 0, 0)));
+	unique_ptr<Component> physComponent(new cRigidCube());
+	unique_ptr<cShapeRenderer> renderComponent(new cShapeRenderer(cShapeRenderer::BOX));
+	renderComponent->SetColour(phys::RandomColour());
+	ent->AddComponent(physComponent);
+	ent->SetName("Cube");
+	ent->AddComponent(unique_ptr<Component>(new cBoxCollider()));
+	ent->AddComponent(unique_ptr<Component>(move(renderComponent)));
+	ent->getComponent<cRigidCube>()->mass = 1.0;
+	ent->getComponent<cRigidCube>()->hasSpring = true;
+	ent->getComponent<cRigidCube>()->springPos = springPos;
+	ent->getComponent<cRigidCube>()->restLength = restLength;
+	ent->getComponent<cRigidCube>()->elasticity = 5;
+
+	return ent;
+}
+
 bool load_content()
 {
 	phys::Init();
@@ -52,14 +89,6 @@ bool load_content()
 		SceneList.push_back(move(CreateParticle()));
 	}
 	SceneList.push_back(move(CreateBox({ 0, 4, 0 })));
-
-	auto b = SceneList[0]->GetComponents("RigidBody");
-	if (b.size() == 1)//Check only 1 phys component
-	{
-		const auto p = static_cast<cRigidBody *>(b[0]);//Find said phys component
-		p->AddLinearImpulse(vec3(-500.0f, 1000.0f, 0.0f));//turns out impulse does work but needs to be really large because this will be multiplied by delta time, but only act for a single frame (perhaps look into allowing a desired velocity to be entered?)
-	}
-
 	floorEnt = unique_ptr<Entity>(new Entity());
 	floorEnt->AddComponent(unique_ptr<Component>(new cPlaneCollider()));
 	floorEnt->SetName("Floor");
@@ -72,11 +101,11 @@ bool load_content()
 void launchSphere()//currently cubes; why you ask? Getting this to make anything was hell and you don't want to know how long this minor change took. Seriously the stress required to restore this method to working order has taken years off my life, thanks Ben.
 {
 	free_camera cam = phys::GetCamera();//Player/User camera.
-	vec3 pos = cam.get_position();//The current position of the camera.
-	vec3 dir = normalize(vec3(cosf(cam.get_pitch()) * -sinf(cam.get_yaw()), sinf(cam.get_pitch()), -cosf(cam.get_yaw()) * cosf(cam.get_pitch())));//The forward direction of the camera.
-	SceneList.push_back(move(CreateBox(pos)));
+	dvec3 pos = cam.get_position();//The current position of the camera.
+	dvec3 dir = normalize(vec3(cosf(cam.get_pitch()) * -sinf(cam.get_yaw()), sinf(cam.get_pitch()), -cosf(cam.get_yaw()) * cosf(cam.get_pitch())));//The forward direction of the camera.
+	SceneList.push_back(move(CreateBox(pos, quat(dir))));
 	auto b = SceneList[SceneList.size()-1]->getComponent<cRigidCube>();
-	b->AddLinearImpulse(dir*0.5f);//Adds impulse in direction player is facing, scaled by a value. Value should be tweaked later to serve our purposes.
+	b->AddLinearImpulse(dir*0.5);//Adds impulse in direction player is facing, scaled by a value. Value should be tweaked later to serve our purposes.
 }
 
 bool update(double delta_time) {
@@ -95,7 +124,6 @@ bool update(double delta_time) {
 
 	if (state == GLFW_PRESS && canClick == true)
 	{
-		cout << "Click" << endl;
 		launchSphere();
 		canClick = false;
 	}

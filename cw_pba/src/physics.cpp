@@ -13,14 +13,12 @@ const double coef = 0.5;
 const double rigidcoef = 0.0;
 
 void ResolveRB(cRigidBody *const b, const collisionInfo &ci, bool which) {
-	// TODO: Fix.
 	const double w = (which ? -1.0 : 1.0);
 
-	dvec3 dv = b->position - b->prev_position;
-	dvec3 r0 = b->position - ci.position;
-	dvec3 v0 = dv + cross(b->angVelocity, r0);
+	dvec3 dv = b->position - b->prev_position; //Change in RB position
+	dvec3 r0 = b->position - ci.position; //Collision position to RB position
+	dvec3 v0 = dv + cross(b->angVelocity, r0); //Angular acceleration
 
-	// I've butchered this formula pretty bad.
 	double j = -1.0 * (rigidcoef) + dot(dv, ci.normal) / (dot(ci.normal, ci.normal) * (b->inversemass * 2.0) + dot(ci.normal, (cross(r0, ci.normal))));
 
 	// stop sinking
@@ -80,8 +78,10 @@ void UpdatePhysics(const double t, const double dt) {
 			Resolve(c);
 		}
 	}
+
 	// Integrate
-	for (auto &e : physicsScene) {
+	for (auto &e : physicsScene)
+	{
 		e->Integrate(dt);
 	}
 }
@@ -95,8 +95,3 @@ const glm::dvec3 &GetGravity() { return gravity; }
 void InitPhysics() {}
 
 void ShutdownPhysics() {}
-
-void cPhysics::AddImpulse()
-{
-	//b->AddLinearImpulse(vec3(1.0f));
-}

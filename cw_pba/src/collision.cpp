@@ -70,7 +70,8 @@ namespace collision {
 
 		// transfrom to global
 		const mat4 m = glm::translate(bp) * mat4_cast(b.GetParent()->GetRotation());
-		for (int i = 0; i < 8; i++) {
+		for (int i = 0; i < 8; i++)
+		{
 			points[i] = dvec3(m * dvec4(points[i], 1.0));
 		}
 
@@ -82,8 +83,8 @@ namespace collision {
 
 			distances[i] = dot(pp, planeNormal) - dot(points[i], planeNormal);
 
-			if (distances[i] > 0) {
-				//	 cout << "CuboidPlane!\n";
+			if (distances[i] > 0)
+			{
 				civ.push_back({ &p, &b, points[i] + planeNormal * distances[i], planeNormal, distances[i] });
 				isCollided = true;
 			}
@@ -91,9 +92,22 @@ namespace collision {
 		return isCollided;
 	}
 
-	bool IsCollidingCheck(std::vector<collisionInfo> &civ, const cBoxCollider &c1, const cBoxCollider &c2) {
-		//TODO:
-		cout << "Box Box" << endl;
+	bool IsCollidingCheck(std::vector<collisionInfo> &civ, const cBoxCollider &c1, const cBoxCollider &c2)
+	{
+		const dvec3 c1p = c1.GetParent()->GetPosition();
+		const dvec3 c2p = c2.GetParent()->GetPosition();
+
+		dvec3 c1Points[8] = { dvec3(c1.radius, c1.radius, c1.radius),   dvec3(-c1.radius, c1.radius, c1.radius),
+			dvec3(c1.radius, -c1.radius, c1.radius),  dvec3(-c1.radius, -c1.radius, c1.radius),
+			dvec3(c1.radius, c1.radius, -c1.radius),  dvec3(-c1.radius, c1.radius, -c1.radius),
+			dvec3(c1.radius, -c1.radius, -c1.radius), dvec3(-c1.radius, -c1.radius, -c1.radius) };
+
+		dvec3 c2Points[8] = { dvec3(c2.radius, c2.radius, c2.radius),   dvec3(-c2.radius, c2.radius, c2.radius),
+			dvec3(c2.radius, -c2.radius, c2.radius),  dvec3(-c2.radius, -c2.radius, c2.radius),
+			dvec3(c2.radius, c2.radius, -c2.radius),  dvec3(-c2.radius, c2.radius, -c2.radius),
+			dvec3(c2.radius, -c2.radius, -c2.radius), dvec3(-c2.radius, -c2.radius, -c2.radius) };
+
+
 		return false;
 	}
 

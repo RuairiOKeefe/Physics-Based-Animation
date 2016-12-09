@@ -10,7 +10,6 @@ public:
 	// virtual void Update(double delta);
 	// virtual void SetParent(Entity *p);
 	//
-	void AddImpulse();
 private:
 };
 

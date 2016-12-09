@@ -81,7 +81,8 @@ void Entity::SetVisibility(const bool b) {}
 void Entity::SetName(string const &name) { name_ = name; }
 
 void Entity::Update(const double delta) {
-	for (auto &c : components_) {
+	for (auto &c : components_)
+	{
 		c->Update(delta);
 	}
 }

@@ -7,10 +7,16 @@ public:
 	glm::dvec3 position;
 	glm::dvec3 prev_position;
 	glm::dvec3 forces;
-	double mass;
-	double inversemass;
+	double mass = 1;
+	double inversemass = 1/mass;
 	double linearDamping;
-	//
+
+	//Spring stuff
+	bool hasSpring = false;
+	glm::dvec3 springPos;
+	double restLength;
+	double elasticity;
+
 	cParticle(const std::string &tag = "Particle");
 	~cParticle();
 	void Update(double delta);
