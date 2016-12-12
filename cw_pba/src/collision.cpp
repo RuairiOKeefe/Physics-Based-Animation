@@ -4,7 +4,31 @@
 #include <glm/gtx/transform.hpp>
 using namespace std;
 using namespace glm;
-namespace collision {
+namespace collision
+{
+	bool IsInRange(double point, double rp1, double rp2)
+	{
+		bool inRange = false;
+		double min = 0.0;
+		double max = 0.0;
+		if (rp1 <= rp2)
+		{
+			min = rp1;
+			max = rp2;
+		}
+		else
+		{
+			min = rp2;
+			max = rp1;
+		}
+
+		if (min <= point)
+			if (point <= max)
+				inRange = true;
+
+		return inRange;
+	}
+
 
 	bool IsCollidingCheck(std::vector<collisionInfo> &civ, const cSphereCollider &c1, const cSphereCollider &c2) {
 		const dvec3 p1 = c1.GetParent()->GetPosition();
@@ -53,7 +77,7 @@ namespace collision {
 	}
 
 	bool IsCollidingCheck(std::vector<collisionInfo> &civ, const cPlaneCollider &c1, const cPlaneCollider &c2) {
-		// TODO
+		//I won're remove this stub, but when will this ever be useful?
 		cout << "PLANE PLANE" << endl;
 		return false;
 	}
@@ -107,8 +131,32 @@ namespace collision {
 			dvec3(c2.radius, c2.radius, -c2.radius),  dvec3(-c2.radius, c2.radius, -c2.radius),
 			dvec3(c2.radius, -c2.radius, -c2.radius), dvec3(-c2.radius, -c2.radius, -c2.radius) };
 
+		const mat4 c1m = glm::translate(c1p) * mat4_cast(c1.GetParent()->GetRotation());
+		const mat4 c2m = glm::translate(c2p) * mat4_cast(c2.GetParent()->GetRotation());
+		for (int i = 0; i < 8; i++)
+		{
+			c1Points[i] = dvec3(c1m * dvec4(c1Points[i], 1.0));
+			c2Points[i] = dvec3(c2m * dvec4(c2Points[i], 1.0));
+		}
 
-		return false;
+		bool isCollided = false;
+		for(int i = 0; i < 8; i++)
+		{
+			if(IsInRange(c1Points[i].x, c2Points[0].x, c2Points[7].x))
+				if (IsInRange(c1Points[i].y, c2Points[0].y, c2Points[7].y))
+					if (IsInRange(c1Points[i].z, c2Points[0].z, c2Points[7].z))
+					{
+						dvec3 dif = c1p - c2p;
+						double dist = length(dif);
+						double depth = (c1.radius + c2.radius) - dist;
+						if (depth < 0)
+							depth *= -1;
+						civ.push_back({ &c1, &c2, c1Points[i], normalize(dif) , depth});
+						isCollided = true;
+					}
+		}
+
+		return isCollided;
 	}
 
 	bool IsColliding(std::vector<collisionInfo> &civ, const cCollider &c1, const cCollider &c2) {
@@ -144,7 +192,7 @@ namespace collision {
 				return IsCollidingCheck(civ, dynamic_cast<const cPlaneCollider &>(c1), dynamic_cast<const cPlaneCollider &>(c2));
 			}
 			else if (s2 == SPHERE) {
-				return IsCollidingCheck(civ, dynamic_cast<const cSphereCollider &>(c1), dynamic_cast<const cPlaneCollider &>(c2));
+				return IsCollidingCheck(civ, dynamic_cast<const cSphereCollider &>(c2), dynamic_cast<const cPlaneCollider &>(c1));
 			}
 			else if (s2 == BOX) {
 				return IsCollidingCheck(civ, dynamic_cast<const cPlaneCollider &>(c1), dynamic_cast<const cBoxCollider &>(c2));

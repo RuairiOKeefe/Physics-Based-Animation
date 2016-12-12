@@ -15,7 +15,8 @@ private:
 
 class cCollider;
 class cParticle;
-struct collisionInfo {
+struct collisionInfo
+{
 	const cCollider *c1;
 	const cCollider *c2;
 	const glm::dvec3 position;
