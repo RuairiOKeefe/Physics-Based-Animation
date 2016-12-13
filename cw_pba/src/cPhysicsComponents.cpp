@@ -148,4 +148,4 @@ cCollider::~cCollider() {
 void cCollider::Update(double delta) {}
 cSphereCollider::cSphereCollider() : radius(1.0), cCollider("SphereCollider") {}
 cPlaneCollider::cPlaneCollider() : normal(dvec3(0, 1.0, 0)), cCollider("PlaneCollider") {}
-cBoxCollider::cBoxCollider() : radius(1.0), cCollider("BoxCollider") {}
+cBoxCollider::cBoxCollider() : radius(1.0), cCollider("BoxCollider") {} //set to 0.5 as box is of size 1

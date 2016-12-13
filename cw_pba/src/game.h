@@ -31,6 +31,7 @@ protected:
 	bool changed_;
 	glm::dvec3 scale_;
 	glm::dvec3 position_;
+	glm::dvec3 prev_position_;
 	glm::dquat rotation_;
 	glm::dmat4 transform_;
 	std::vector<std::unique_ptr<Component>> components_;
@@ -42,6 +43,7 @@ public:
 
 	const glm::dvec3 GetScale() const;
 	const glm::dvec3 GetPosition() const;
+	const glm::dvec3 GetPrevPosition() const;
 	const glm::dvec3 GetRotationV3() const;
 	const glm::dquat GetRotation() const;
 	const glm::dmat4 GetTranform();

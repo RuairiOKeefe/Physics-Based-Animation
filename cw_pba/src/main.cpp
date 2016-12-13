@@ -106,7 +106,7 @@ bool load_content()
 		SceneList.push_back(move(CreateParticle()));
 	}
 	SceneList.push_back(move(CreateBox({ 0, 4, 0 })));
-	//SceneList.push_back(move(CreateBox({ 0, 6, 0 })));
+	SceneList.push_back(move(CreateBox({ 0, 10, 0 })));
 	//SceneList.push_back(move(CreateBox({ 0, 8, 0 })));
 	floorEnt = unique_ptr<Entity>(new Entity());
 	floorEnt->AddComponent(unique_ptr<Component>(new cPlaneCollider()));
@@ -124,7 +124,7 @@ void launchCube()
 	dvec3 dir = normalize(vec3(cosf(cam.get_pitch()) * -sinf(cam.get_yaw()), sinf(cam.get_pitch()), -cosf(cam.get_yaw()) * cosf(cam.get_pitch())));//The forward direction of the camera.
 	SceneList.push_back(move(CreateBox(pos, quat(dvec4(dir, 1.0)))));
 	auto b = SceneList[SceneList.size() - 1]->getComponent<cRigidCube>();
-	b->AddLinearImpulse(dir*1.0);//Adds impulse in direction player is facing, scaled by a value. Value should be tweaked later to serve our purposes.
+	b->AddLinearImpulse(dir*0.5);//Adds impulse in direction player is facing, scaled by a value. Value should be tweaked later to serve our purposes.
 }
 
 void launchSphere()

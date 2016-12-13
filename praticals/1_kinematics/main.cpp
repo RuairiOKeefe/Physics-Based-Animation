@@ -15,7 +15,6 @@ using namespace glm;
 int numLinks = 3;
 double linkLength = 2.0f; // Length of each link
 std::vector<Link> links;
-<<<<<<< HEAD
 std::array<std::vector<Link>, 2> pastLinks;
 std::vector<Link> lerpLinks;
 int order = 0;

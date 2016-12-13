@@ -37,7 +37,7 @@ void Init() {
 	effG.build();
 	cam.set_position(vec3(10.0f, 10.0f, 10.0f));
 	auto aspect = static_cast<float>(renderer::get_screen_width()) / static_cast<float>(renderer::get_screen_height());
-	cam.set_projection(quarter_pi<float>(), aspect, 2.414f, 1000.0f);
+	cam.set_projection(quarter_pi<float>(), aspect, 0.1f, 1000.0f);
 
 	light.set_ambient_intensity(vec4(0.5f, 0.5f, 0.5f, 1.0f));
 	light.set_light_colour(vec4(1.0f, 1.0f, 1.0f, 1.0f));

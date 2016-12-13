@@ -12,7 +12,8 @@ static dvec3 gravity = dvec3(0, -10.0, 0);
 const double coef = 0.5;
 const double rigidcoef = 0.0;
 
-void ResolveRB(cRigidBody *const b, const collisionInfo &ci, bool which) {
+void ResolveRB(cRigidBody *const b, const collisionInfo &ci, bool which)//Currently this is in effect, fucked. It works for boxes, but not spheres properly, will need to look closer
+{
 	const double w = (which ? -1.0 : 1.0);
 
 	dvec3 dv = b->position - b->prev_position; //Change in RB position
@@ -22,11 +23,11 @@ void ResolveRB(cRigidBody *const b, const collisionInfo &ci, bool which) {
 	double j = -1.0 * (rigidcoef) + dot(dv, ci.normal) / (dot(ci.normal, ci.normal) * (b->inversemass * 2.0) + dot(ci.normal, (cross(r0, ci.normal))));
 
 	// stop sinking
-	j = j - (ci.depth * 0.1);
+	j = (j - (ci.depth * 0.1))*0.5;
 
 	// linear impulse
 	dvec3 newVel = dv + (b->inversemass * ci.normal * j);
-	b->AddLinearImpulse(-newVel);
+	b->AddLinearImpulse(-newVel*0.95);
 
 	// angular impulse
 	auto gg = cross(r0, ci.normal);
@@ -66,8 +67,10 @@ void UpdatePhysics(const double t, const double dt) {
 	std::vector<collisionInfo> collisions;
 	// check for collisions
 	{
-		for (size_t i = 0; i < colliders.size(); ++i) {
-			for (size_t j = i + 1; j < colliders.size(); ++j) {
+		for (size_t i = 0; i < colliders.size(); ++i)
+		{
+			for (size_t j = i + 1; j < colliders.size(); ++j)
+			{
 				collision::IsColliding(collisions, *colliders[i], *colliders[j]);
 			}
 		}

@@ -5,4 +5,5 @@
 
 namespace collision {
 	bool IsColliding(std::vector<collisionInfo> &civ, const cCollider &c1, const cCollider &c2);
+	bool PointInRange(double point, double rp1, double rp2);
 }

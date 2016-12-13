@@ -26,6 +26,7 @@ Entity::Entity() {
 	changed_ = true;
 	scale_ = vec3(1.0f, 1.0f, 1.0f);
 	position_ = vec3(0.0f, 0.0f, 0.0f);
+	prev_position_ = vec3(0.0f, 0.0f, 0.0f);
 	rotation_ = quat();
 	colour = RED;
 }
@@ -35,7 +36,7 @@ Entity::~Entity() {}
 const dvec3 Entity::GetScale() const { return scale_; }
 
 const dvec3 Entity::GetPosition() const { return position_; }
-
+const dvec3 Entity::GetPrevPosition() const { return prev_position_; }
 const dquat Entity::GetRotation() const { return rotation_; }
 const dvec3 Entity::GetRotationV3() const { return glm::eulerAngles(GetRotation()); }
 
@@ -62,6 +63,7 @@ void Entity::SetScale(const dvec3 &v3) {
 }
 
 void Entity::SetPosition(const dvec3 &v3) {
+	prev_position_ = position_;
 	position_ = v3;
 	changed_ = true;
 }
