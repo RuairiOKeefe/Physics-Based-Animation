@@ -122,7 +122,8 @@ void launchCube()
 	free_camera cam = phys::GetCamera();//Player/User camera.
 	dvec3 pos = cam.get_position();//The current position of the camera.
 	dvec3 dir = normalize(vec3(cosf(cam.get_pitch()) * -sinf(cam.get_yaw()), sinf(cam.get_pitch()), -cosf(cam.get_yaw()) * cosf(cam.get_pitch())));//The forward direction of the camera.
-	SceneList.push_back(move(CreateBox(pos, quat(dvec4(dir, 1.0)))));
+	quat a = angleAxis(cam.get_yaw() , vec3(0, 1, 0));
+	SceneList.push_back(move(CreateBox(pos, a)));
 	auto b = SceneList[SceneList.size() - 1]->getComponent<cRigidCube>();
 	b->AddLinearImpulse(dir*0.5);//Adds impulse in direction player is facing, scaled by a value. Value should be tweaked later to serve our purposes.
 }

@@ -9,17 +9,28 @@ static vector<cParticle *> physicsScene;
 static vector<cCollider *> colliders;
 
 static dvec3 gravity = dvec3(0, -10.0, 0);
-const double coef = 0.5;
+const double coef = 0.5;//of restitution
 const double rigidcoef = 0.0;
 
-void ResolveRB(cRigidBody *const b, const collisionInfo &ci, bool which)//Currently this is in effect, fucked. It works for boxes, but not spheres properly, will need to look closer
+void ResolveRB(cRigidBody *const b, const collisionInfo &ci, bool which)
 {
 	const double w = (which ? -1.0 : 1.0);
 
-	dvec3 dv = b->position - b->prev_position; //Change in RB position
+	dvec3 dv = b->position - b->prev_position; //Velocity of b
+	dvec3 c2v = ci.c2->GetParent()->GetPosition() - ci.c2->GetParent()->GetPrevPosition(); //Velocity of object c2 in ci
+
 	dvec3 r0 = b->position - ci.position; //Collision position to RB position
 	dvec3 v0 = dv + cross(b->angVelocity, r0); //Angular acceleration
 
+	double contactVel = dot(c2v - dv, ci.c2->GetParent()->GetPosition() - ci.c1->GetParent()->GetPosition());
+	if (ci.c1->GetParent()->getComponent<cPlaneCollider>() == NULL && ci.c2->GetParent()->getComponent<cPlaneCollider>() == NULL)
+	{
+		if (0 < contactVel)//Already moving apart
+		{
+			return;
+		}
+	}
+	
 	double j = -1.0 * (rigidcoef) + dot(dv, ci.normal) / (dot(ci.normal, ci.normal) * (b->inversemass * 2.0) + dot(ci.normal, (cross(r0, ci.normal))));
 
 	// stop sinking

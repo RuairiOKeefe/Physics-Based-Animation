@@ -36,7 +36,7 @@ namespace collision
 		const dvec3 p1 = c1.GetParent()->GetPosition();
 		const dvec3 p2 = c2.GetParent()->GetPosition();
 
-		if (length(p1 - p2) <= c1.radius + c2.radius)//could reduce, should reduce, but shits broke anyway...
+		if (length(p1 - p2) <= c1.radius + c2.radius)
 		{
 			const dvec3 d = p2 - p1;
 			const double distance = glm::length(d);
@@ -67,7 +67,7 @@ namespace collision
 		dvec3 reflect = d - (2.0 * dot(d, normalize(p.normal))*normalize(p.normal));
 		reflect += (normalize(p.normal));
 		if (distance <= s.radius) {
-			civ.push_back({ &s, &p, collPos, normalize(reflect), (s.radius - distance)*50.0});//scaled because otherwise this is reduced too much to bounce, will likely want to create bounciness variable for rigidbodies, this however means that this scales with velocity so objects will increase in speed the more they bounce, also as objects at steep angle are going "faster" they will go faster than shallow angled ones
+			civ.push_back({ &s, &p, collPos, normalize(reflect), (s.radius - distance)});//scaled because otherwise this is reduced too much to bounce, will likely want to create bounciness variable for rigidbodies, this however means that this scales with velocity so objects will increase in speed the more they bounce, also as objects at steep angle are going "faster" they will go faster than shallow angled ones
 			return true;
 		}
 
@@ -98,7 +98,6 @@ namespace collision
 			{
 				if (length(c2Points[i] - sp) < c1.radius)
 				{
-					cout << length(c2Points[i] - sp) << endl;
 					double depth = c1.radius - length(c2Points[i] - sp);
 					civ.push_back({ &c1, &c2, c2Points[i], normalize(sp - c2Points[i]) , depth });
 					isCollided = true;
@@ -114,7 +113,8 @@ namespace collision
 		return false;
 	}
 
-	bool IsCollidingCheck(std::vector<collisionInfo> &civ, const cPlaneCollider &p, const cBoxCollider &b) {
+	bool IsCollidingCheck(std::vector<collisionInfo> &civ, const cPlaneCollider &p, const cBoxCollider &b)//Do something similar to sphere plane here, so object is forced out at correct normal
+	{
 		const dvec3 pp = p.GetParent()->GetPosition();
 		const dvec3 bp = b.GetParent()->GetPosition();
 
@@ -191,8 +191,8 @@ namespace collision
 							dvec3 d = c2p - c1p;
 							double distance = length(d);
 							double depth = (length(c1p - c1Points[i]) + length(c2p - c2Points[i]) - distance)*0.1;
-							vec3 pos = c2p - normalize(d) * ((length(c1Points[i] - c1p)) - depth);
-							civ.push_back({ &c1, &c2, pos, normalize(d) , depth });
+							dvec3 pos = c2p - normalize(d) * ((length(c1Points[i] - c1p)) - depth);
+							civ.push_back({ &c1, &c2, pos, normalize(pos - c1p) , depth });
 							//cout << normalize(dif) << ", " << depth << endl;
 							isCollided = true;
 						}
@@ -207,8 +207,8 @@ namespace collision
 							dvec3 d = c1p - c2p;
 							double distance = length(d);
 							double depth = (length(c1p - c1Points[i]) + length(c2p - c2Points[i]) - distance)*0.1;
-							vec3 pos = c1p - normalize(d) * ((length(c2p - c2Points[i])) - depth);
-							civ.push_back({ &c1, &c2, pos, normalize(d) , depth });
+							dvec3 pos = c1p - normalize(d) * ((length(c2p - c2Points[i])) - depth);
+							civ.push_back({ &c1, &c2, pos, normalize(pos - c1p) , depth });
 							//cout << normalize(dif) << ", " << depth << endl;
 							isCollided = true;
 						}
