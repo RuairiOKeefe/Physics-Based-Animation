@@ -102,12 +102,20 @@ bool load_content()
 {
 	glfwSetInputMode(renderer::get_window(), GLFW_STICKY_MOUSE_BUTTONS, 1);
 	phys::Init();
-	for (size_t i = 0; i < 4; i++) {
-		SceneList.push_back(move(CreateParticle()));
-	}
-	SceneList.push_back(move(CreateBox({ 0, 4, 0 })));
-	SceneList.push_back(move(CreateBox({ 0, 10, 0 })));
-	//SceneList.push_back(move(CreateBox({ 0, 8, 0 })));
+	SceneList.push_back(move(CreateBox({ 0.5, 1, 0 })));
+	SceneList.push_back(move(CreateBox({ -0.5, 1, 0 })));
+	SceneList.push_back(move(CreateBox({ 0, 2, 0 })));
+
+	SceneList.push_back(move(CreateBox({ 4, 4, 4 })));
+	SceneList.push_back(move(CreateBox({ 4, 8, 4 })));
+
+	SceneList.push_back(move(CreateBox({ 5, 4, 8 })));
+	SceneList.push_back(move(CreateBox({ 5, 8, 8 })));
+
+	SceneList.push_back(move(CreateBox({ 8, 4, 5 })));
+	SceneList.push_back(move(CreateBox({ 8, 8, 5 })));
+
+
 	floorEnt = unique_ptr<Entity>(new Entity());
 	floorEnt->AddComponent(unique_ptr<Component>(new cPlaneCollider()));
 	floorEnt->SetName("Floor");

@@ -208,7 +208,7 @@ namespace collision
 							double distance = length(d);
 							double depth = (length(c1p - c1Points[i]) + length(c2p - c2Points[i]) - distance)*0.1;
 							dvec3 pos = c1p - normalize(d) * ((length(c2p - c2Points[i])) - depth);
-							civ.push_back({ &c1, &c2, pos, normalize(pos - c1p) , depth });
+							civ.push_back({ &c1, &c2, pos, normalize(pos - c2p) , depth });
 							//cout << normalize(dif) << ", " << depth << endl;
 							isCollided = true;
 						}
