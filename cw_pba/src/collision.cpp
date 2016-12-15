@@ -42,9 +42,11 @@ namespace collision
 			const double distance = glm::length(d);
 			const double sumRadius = c1.radius + c2.radius;
 			if (distance < sumRadius) {
-				auto depth = sumRadius - distance;
-				auto norm = -glm::normalize(d);
-				auto pos = p1 - norm * (c1.radius - depth * 0.5f);
+				double depth = sumRadius - distance;
+				dvec3 norm = -glm::normalize(d);
+				dvec3 pos = p1 - norm * (c1.radius - depth * 0.5f);
+				if (depth < 0)
+					depth *=-1;
 				civ.push_back({ &c1, &c2, pos, norm, depth });
 				return true;
 			}
@@ -67,7 +69,7 @@ namespace collision
 		dvec3 reflect = d - (2.0 * dot(d, normalize(p.normal))*normalize(p.normal));
 		reflect += (normalize(p.normal));
 		if (distance <= s.radius) {
-			civ.push_back({ &s, &p, collPos, normalize(reflect), (s.radius - distance)});//scaled because otherwise this is reduced too much to bounce, will likely want to create bounciness variable for rigidbodies, this however means that this scales with velocity so objects will increase in speed the more they bounce, also as objects at steep angle are going "faster" they will go faster than shallow angled ones
+			civ.push_back({ &s, &p, collPos, normalize(reflect), (sp.y - s.radius)*-1});
 			return true;
 		}
 
@@ -139,7 +141,7 @@ namespace collision
 			dvec3 planeNormal = p.normal;
 
 			distances[i] = dot(pp, planeNormal) - dot(points[i], planeNormal);
-
+			
 			if (distances[i] > 0)
 			{
 				distances[i] * 1.3;
@@ -191,9 +193,8 @@ namespace collision
 							dvec3 d = c2p - c1p;
 							double distance = length(d);
 							double depth = (length(c1p - c1Points[i]) + length(c2p - c2Points[i]) - distance)*0.1;
-							dvec3 pos = c2p - normalize(d) * ((length(c1Points[i] - c1p)) - depth);
-							civ.push_back({ &c1, &c2, pos, normalize(pos - c1p) , depth });
-							//cout << normalize(dif) << ", " << depth << endl;
+							dvec3 collPos = c2p - normalize(d) * ((length(c1Points[i] - c1p)) - depth);
+							civ.push_back({ &c1, &c2, collPos, normalize(collPos - c1p) , depth });
 							isCollided = true;
 						}
 			}
@@ -207,9 +208,8 @@ namespace collision
 							dvec3 d = c1p - c2p;
 							double distance = length(d);
 							double depth = (length(c1p - c1Points[i]) + length(c2p - c2Points[i]) - distance)*0.1;
-							dvec3 pos = c1p - normalize(d) * ((length(c2p - c2Points[i])) - depth);
-							civ.push_back({ &c1, &c2, pos, normalize(pos - c2p) , depth });
-							//cout << normalize(dif) << ", " << depth << endl;
+							dvec3 collPos = c1p - normalize(d) * ((length(c2p - c2Points[i])) - depth);
+							civ.push_back({ &c1, &c2, collPos, normalize(collPos - c2p) , depth });
 							isCollided = true;
 						}
 			}

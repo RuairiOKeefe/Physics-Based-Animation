@@ -17,6 +17,8 @@ vector<unique_ptr<Entity>> SceneList;
 unique_ptr<Entity> floorEnt;
 bool canClick = true;
 bool canSwitch = true;
+bool canF = true;
+int maxF = 6;
 enum shape {cube, sphere};
 shape launchType = cube;
 
@@ -102,8 +104,8 @@ bool load_content()
 {
 	glfwSetInputMode(renderer::get_window(), GLFW_STICKY_MOUSE_BUTTONS, 1);
 	phys::Init();
-	SceneList.push_back(move(CreateBox({ 0.5, 1, 0 })));
-	SceneList.push_back(move(CreateBox({ -0.5, 1, 0 })));
+	SceneList.push_back(move(CreateBox({ 0.55, 1, 0 })));
+	SceneList.push_back(move(CreateBox({ -0.55, 1, 0 })));
 	SceneList.push_back(move(CreateBox({ 0, 2, 0 })));
 
 	SceneList.push_back(move(CreateBox({ 4, 4, 4 })));
@@ -201,6 +203,19 @@ bool update(double delta_time) {
 		{
 			canClick = true;
 		}
+
+	if (glfwGetKey(renderer::get_window(), GLFW_KEY_F) && canF)
+	{
+		SceneList.clear();
+		for (int i = -maxF; i < maxF; i++)
+		{
+			for (int j = -maxF; j < maxF; j++)
+			{
+				SceneList.push_back(move(CreateBox(dvec3(i*4, 20.0, j*4))));
+			}
+		}
+		canF = false;
+	}
 
 	for (auto &e : SceneList) {
 		e->Update(delta_time);
